@@ -278,7 +278,7 @@
 		hostedby = "<br/>host: <font color=\"white\">" + fafinfo["host"] + "</font>";
 	}
 	html += "<h2><font color=\"white\">" + fafinfo["title"] + "</font> on <font color=\"white\">" + scenario["name"] +  "</font>" + hostedby + "</h2>";
-	html += "<img src=\"" + "//content.faforever.com/faf/vault/map_previews/small/" + scenario["map"].split("/")[2].toLowerCase() + ".png" + "\" title=\""+ scenario["name"] +"\"/>";
+	html += "<img src=\"" + "//content.faforever.com/maps/previews/small/" + scenario["map"].split("/")[2].toLowerCase() + ".png" + "\" title=\""+ scenario["name"] +"\"/>";
 	if(scenario["description"])
 		html += "<p id=\"mapdesc\">" + scenario["description"].replace(/<.*>/,"") + "</p>";
 	html += "<h3>runtime: <font color=\"white\">" + ticktotime(ticks) + "</font></h3>";
@@ -422,7 +422,7 @@
 
 	function loadbyid(id) {
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', '//content.faforever.com/faf/vault/replay_vault/replay.php?id=' + id, true);
+		xhr.open('GET', '//replay.faforever.com/' + id, true);
 		xhr.responseType = 'blob';
 		xhr.onload = function(e) {
 		  if (this.status == 200) {
@@ -469,7 +469,6 @@
 		</p>
 		<p>
 		<li>If you play on FAF, you can find your replays in this folder: <span class="link">C:\ProgramData\FAForever\replays</span>.
-		<li>You can also grab replays from the <span class="link"><a target="new" href="//content.faforever.com/faf/vault/replays_simple.php">FAF replay vault</a></span>
 		</p>
 		<p>
 		Drop a supcom replay file anywhere on this page.
