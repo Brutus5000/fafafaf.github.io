@@ -25,10 +25,10 @@
 			graphdata[i][j] = sum;
 		}
 	}
-	
+
 	var m = [80, 80, 80, 80]; // margins
 	var w = 1150 - m[1] - m[3]; // width
-	var h = 400 - m[0] - m[2]; // height 
+	var h = 400 - m[0] - m[2]; // height
 
 	var PlayerColors = [ // this is from faf.nxt/lua/GameColors.lua
 				"#436eee",      // new blue1
@@ -66,7 +66,7 @@
 	var line = d3.svg.line()
 		.x(function(d,i) { return x(i); })
 		.y(function(d) { return y(d); })
-	 
+
 
 	var graph = d3.select("#graph")
 		.append("svg:svg")
@@ -75,7 +75,7 @@
 		.on("mousemove", mousemove)
 		.append("svg:g")
 		.attr("transform", "translate(" + m[3] + "," + m[0] + ")");
-	 
+
 
 	var xAxis = d3.svg.axis()
 		.scale(x)
@@ -105,7 +105,7 @@
 			.attr("width", 10)
 			.attr("height", 10)
 			.style("fill", PlayerColors[i]);
-		
+
 		legend.append("text")
 			.attr("x", w - 50)
 			.attr("y", i * 25 + 8)
@@ -121,7 +121,7 @@
 	   .attr("y", 20)
 	   .text("Commands per Minute");
 
-	
+
 	graph.append("g")
 		.attr("class", "axis")
 		.attr("transform", "translate(0," + h + ")")
@@ -131,7 +131,7 @@
 		.attr("class", "axis")
 		.attr("transform", "translate(0,0)")
 		.call(yAxis);
-	
+
 	 function mousemove() {
 		var tick = (d3.mouse(this)[0]- m[1] > 0)?x.invert(d3.mouse(this)[0]-m[1])|0:0;
 		h = "<p><center>Timeframe: "  + ticktotime(tick) + " - " + ticktotime(tick+600) +  "</center><p>";
@@ -144,10 +144,10 @@
 						case "BuildFactory":
 						case "BuildMobile":
 						case "Upgrade":
-							h += "<span class=\"unit " + cmd["bp"].toUpperCase() + "\" title=\"" + unitNames[cmd["bp"]] + "\"></span>"; 
+							h += "<span class=\"unit " + cmd["bp"].toUpperCase() + "\" title=\"" + unitNames[cmd["bp"]] + "\"></span>";
 							break;
 						case "Script":
-							h += EUnitCommandType[cmd["type"]] + ": " + cmd["lua"]["Enhancement"] + ", "; 
+							h += EUnitCommandType[cmd["type"]] + ": " + cmd["lua"]["Enhancement"] + ", ";
 							break;
 						default:
 							h += "<span class=\"action " + EUnitCommandType[cmd["type"]].toLowerCase() + "_btn_up\" title=\"" + EUnitCommandType[cmd["type"]] + "\"></span>";
@@ -157,9 +157,9 @@
 		}
 		document.getElementById("actions").innerHTML = h;
 	 }
-	 
+
 	 /* grouped bar chart */
-	 
+
 	var data = [];
 	var playerNames = [];
 	for(player in army) {
@@ -173,7 +173,7 @@
 			"Everything else": army[player]["commands"].filter(function(cmd) { return EUnitCommandType[cmd["type"]] != "BuildFactory" && EUnitCommandType[cmd["type"]] != "BuildMobile" && EUnitCommandType[cmd["type"]] != "Reclaim" && EUnitCommandType[cmd["type"]] != "Attack" && EUnitCommandType[cmd["type"]] != "Move"}).length,
 			}
 	}
-	
+
 	document.getElementById("actionDist").innerHTML = "";
 	var graph_ad = d3.select("#actionDist")
 		.append("svg:svg")
@@ -181,7 +181,7 @@
 		.attr("height", h + m[0] + m[2])
 		.append("svg:g")
 		.attr("transform", "translate(" + m[3] + "," + m[0] + ")");
-	
+
 	var y_ad = d3.scale.linear().range([h, 0]);
 	var x0_ad = d3.scale.ordinal().rangeRoundBands([0, w], .1);
 	var x1_ad = d3.scale.ordinal();
@@ -190,22 +190,22 @@
 	var xAxis_ad = d3.svg.axis()
 		.scale(x0_ad)
 		.orient("bottom");
-	 
+
 	var yAxis_ad = d3.svg.axis()
 		.scale(y_ad)
 		.orient("left")
 		.tickFormat(d3.format(".2s"));
-	
+
 	var barNames = d3.keys(data[0]);
 	x0_ad.domain(playerNames);
 	x1_ad.domain(barNames).rangeRoundBands([0, x0_ad.rangeBand()]);
 	y_ad.domain([0, d3.max(data, function(d) { return d3.max(d3.values(d))})]);
-	
+
 	for(player in data) {
 		var pgroup = graph_ad.append("g")
 			.attr("class", "g")
 			.attr("transform", function() { return "translate(" + x0_ad(playerNames[player]) + ",0)"; });
-		
+
 		for(bar in barNames) {
 			var barName = barNames[bar]
 			pgroup.append("rect")
@@ -216,7 +216,7 @@
 				.style("fill", color(barName))
 				.append("svg:title")
 				.text(data[player][barName]);
-			
+
 			pgroup.append("text")
 				.attr("class", "percent")
 				.attr("x", x1_ad(barName) + x1_ad.rangeBand()/2 )
@@ -224,28 +224,28 @@
 				.attr("text-anchor", "middle")
 				.text(((data[player][barName] / army[player]["commands"].length * 100)|0) + "%");
 		}
-		
+
 	}
-	
+
 	 var legend = graph_ad.selectAll(".legend")
 		.data(barNames.slice())
 		.enter().append("g")
 		.attr("class", "legend")
 		.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-	
+
 	 legend.append("rect")
 		.attr("x", w - 18)
 		.attr("width", 18)
 		.attr("height", 18)
 		.style("fill", color);
-		 
+
 	legend.append("text")
 		.attr("x", w - 24)
 		.attr("y", 9)
 		.attr("dy", ".35em")
 		.style("text-anchor", "end")
 		.text(function(d) { return d; });
-	
+
 	graph_ad.append("g")
 			.attr("class", "y axis")
 			.call(yAxis_ad)
@@ -255,12 +255,12 @@
 			.attr("dy", ".71em")
 			.style("text-anchor", "end")
 			.text("Num. of commands");
-	
+
 	graph_ad.append("g")
 			.attr("class", "x axis")
 			.attr("transform", "translate(0," + h + ")")
 			.call(xAxis_ad);
-		
+
   } // end of genchart
   function geninfo() {
 	var teams = []; var teamid = 1; var noteam=0;
@@ -271,7 +271,7 @@
 		else
 			teams[teamNum] = [i];
 	}
-  
+
 	html = "<center><h2>" + verstring + "</h2>";
 	var hostedby = "";
 	if("host" in fafinfo) {
@@ -282,11 +282,11 @@
 	if(scenario["description"])
 		html += "<p id=\"mapdesc\">" + scenario["description"].replace(/<.*>/,"") + "</p>";
 	html += "<h3>runtime: <font color=\"white\">" + ticktotime(ticks) + "</font></h3>";
-	
+
 	if (fafinfo["game_time"] && fafinfo["game_end"]) {
 		var startDate = new Date(fafinfo["game_time"]*1000);
 		var endDate = new Date(fafinfo["game_end"]*1000);
-		
+
 		if (startDate.getDay() == endDate.getDay())
 			html += "<h4>" + startDate.toLocaleDateString() + "<br/> " + startDate.toLocaleTimeString() + " - " + endDate.toLocaleTimeString() + "</h4></center>";
 		else
@@ -296,7 +296,7 @@
 		html += "<h4>finished: <font color=\"white\">" + endDate.toISOString().replace(/[TZ]/g," ") + "</font></h4></center>";
 	}
 	html += "";
-	
+
 	html += "<div id=\"teams\">";
 	teams.forEach(function(team,i) {
 		html += "<table class=\"team\">";
@@ -346,7 +346,7 @@
   window.onload = function() {
 	var reader = new FileReader();
 	var fileInput = document.getElementById('fileInput');
-	
+
 	reader.onload = function(e) {
 		if (reader.result.length > 0) {
 				document.getElementById("hint").style.display = "none";
@@ -374,7 +374,7 @@
 						var compressed = atob(replay[1]).split('').map(function(e) {
 							return e.charCodeAt(0);
 						});
-						
+
 						var inflate = new Zlib.Inflate(compressed,{index: 4,resize:true});
 						setTimeout(function() {
 							try{
@@ -394,24 +394,24 @@
 				}
 		}
 	}
-	
+
 	fileInput.addEventListener('change', function(e) {
-		var file = fileInput.files[0];	
+		var file = fileInput.files[0];
 		reader.readAsBinaryString(file);
     });
-	
+
 	window.addEventListener("dragover",function(e){
 		e = e || event;
 		e.preventDefault();
 	},false);
-	
+
 	window.addEventListener("drop",function(e){
 		e = e || event;
 		e.preventDefault();
-		var file = e.dataTransfer.files[0];	
+		var file = e.dataTransfer.files[0];
 		reader.readAsBinaryString(file);
 	},false);
-	
+
 	document.getElementById("load").addEventListener("click", function(e) {
 		if (document.getElementById("replayid").checkValidity()) {
 			var id = document.getElementById("replayid").value;
@@ -419,7 +419,7 @@
 			loadbyid(id)
 		}
 	},false);
-	
+
 	function loadbyid(id) {
 		var xhr = new XMLHttpRequest();
 		xhr.open('GET', '//content.faforever.com/faf/vault/replay_vault/replay.php?id=' + id, true);
@@ -431,7 +431,7 @@
 		};
 		xhr.send();
 	}
-  
+
 	if(window.location.hash) {
 		var id = window.location.hash.substring(1);
 		if(parseInt(id) == id) {
